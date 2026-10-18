@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:moviles_auth/components/primary_button.dart';
 import 'package:moviles_auth/components/profile_field.dart';
+import 'package:moviles_auth/features/auth/domain/usecases/sign_out_usecase.dart';
 import 'package:moviles_auth/theme/app_theme.dart';
 
 /// Shows the profile of the signed in user and lets them sign out.
@@ -9,16 +10,23 @@ class HomeScreen extends StatelessWidget {
   final String username;
   final String fullName;
   final String email;
+  final SignOutUseCase? signOutUseCase;
 
   const HomeScreen({
     super.key,
     this.username = 'usuario',
     this.fullName = 'Nombre Apellido',
     this.email = 'correo@ejemplo.com',
+    this.signOutUseCase,
   });
 
-  void _signOut(BuildContext context) {
-    Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+  Future<void> _signOut(BuildContext context) async {
+    try {
+      await signOutUseCase?.call();
+    } catch (_) {}
+    if (context.mounted) {
+      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+    }
   }
 
   @override
