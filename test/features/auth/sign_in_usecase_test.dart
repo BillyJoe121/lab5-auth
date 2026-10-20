@@ -42,6 +42,16 @@ void main() {
     );
   });
 
+  test('si el perfil falla, cierra la sesión y lanza AuthFailure', () async {
+    profiles.getError = Exception('No rows returned');
+
+    await expectLater(
+      signIn(email: 'ana@icesi.edu.co', password: '123456'),
+      throwsA(isA<AuthFailure>()),
+    );
+    expect(auth.calls, ['signIn', 'signOut']);
+  });
+
   test('signOut delega en el repositorio', () async {
     await signOut();
     expect(auth.calls, ['signOut']);
